@@ -4,12 +4,7 @@
 #include<iostream>
 #include<stdio.h>
 #include<windows.h>
-#include<chrono>
-#include<time.h>
-#include <unistd.h>
-using namespace std :: chrono;
 using namespace std;
-bool again=FALSE;
 const int CELL_SIZE = 18;
 const int EMPTY = 0;
 const int BODY1 = 1;
@@ -28,10 +23,7 @@ int mcolor, color=YELLOW, freezecolor, color2=LIGHTMAGENTA;
 enum Directions1 {UP,DOWN,LEFT,RIGHT};
 enum Directions2 {W,S,A,D};
 Directions1 snakeDirection1=DOWN, snakeDirectionprev1=  DOWN;
-Directions2 snakeDirection2= S, snakeDirectionprev2=  S;
-void Game();
-void checkkeyinput();
-void startFire();
+Directions2 snakeDirection2= S;
 struct location1
 {int r;
 int c;};
@@ -121,9 +113,7 @@ int board[35][45]=
 
 
  //   ----The Functios Of Draw&Erase Every Element----//
-
 void drawWall(int row, int col){
-
 int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
 int right = left + CELL_SIZE;
@@ -137,22 +127,16 @@ line(left+12, top+0, left+12, top+9);
 line(left+4, top+9, left+4 , bottom);
 line(left, bottom, right , bottom);
 line(left, top , right , top);}
-
-
-void drawFire(int row, int col){
-int left = col*CELL_SIZE;
+/*void drawFire(int row, int col)
+int left = col*CELL_SIZE:
 int top = row*CELL_SIZE;
-setfillstyle(SOLID_FILL, LIGHTCYAN);
-bar (left+2, top+2, left+15, top+15);
-}
-void eraseFire (int row, int col){
- int left = col*CELL_SIZE;
+readimagefile( "yg. ico", left, top, left +16, top +16 ):
+void eraseFire (int row, int col)
+= int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
 setfillstyle(SOLID_FILL, BLACK);
 bar (left, top, left+18, top+18);
-}
-
-
+}*/
 
 void drawheart (int row, int col)
 {int left = col*CELL_SIZE;
@@ -245,8 +229,8 @@ settextjustify(CENTER_TEXT, CENTER_TEXT);
 settextstyle(BOLD_FONT,HORIZ_DIR,2);
 outtextxy(getmaxx()/2, getmaxy()/6, "Press Enter");}}}
 void drawMenuBoard()
-{for (int row=0; row<40; row++) //number of row and number of coloumns :: time complexity
-   for(int col=0; col<50; col++)
+{for (int row=0; row<35; row++)
+   for(int col=0; col<45; col++)
     drawWall(row,col);}
 
 void drawBoard1(){
@@ -294,10 +278,10 @@ drawMenuBoard();
 setcolor(WHITE);
 setbkcolor(LIGHTRED);
 settextstyle(BOLD_FONT, HORIZ_DIR, 5);
-outtextxy(300, 50,"The Snake Game");
+outtextxy(180, 50,"The Snake Game");
 settextstyle(BOLD_FONT, HORIZ_DIR, 5);
-outtextxy(300, 220," single player Press 1");
-outtextxy(300, 320," Multiplayer Press 2");}
+outtextxy(100, 220," single player Press 1");
+outtextxy(100, 320," Multiplayer Press 2");}
 
  void choosesnakecolor()
 {
@@ -306,7 +290,7 @@ drawMenuBoard();
 setcolor(WHITE);
 setbkcolor(LIGHTRED);
 settextstyle(BOLD_FONT, HORIZ_DIR, 5);
-outtextxy(350,50, "Choose Snake color");
+outtextxy(300,50, "Choose Snake color");
 setcolor(YELLOW);
 outtextxy(350,220, "Yellow Press 3");
 setcolor(BLUE);
@@ -353,8 +337,8 @@ drawSnow(r,c);}
 {
   int r,c;
   do
-{r=rand()%33;
-c=rand()%43;}
+{r=rand()%35;
+c=rand()%45;}
 while(board [r][c] != EMPTY);
 board[r][c]= APPLE;
 drawApple(r,c);}
@@ -405,7 +389,20 @@ return nextFireLoc;}
 location1 getnexthead1()
 {
 location1 head1=snakebodyl.back();
-
+/*switch(snakeDirection1)
+{
+case UP:
+head1.r -=1;
+break;
+case DOWN:
+head1.r +=1;
+break;
+case LEFT:
+head1.c -=1;
+break;
+case RIGHT:
+head1.c +=1;
+break;}*/
 if (snakeDirection1 == UP && snakeDirectionprev1 != DOWN ||(snakeDirection1 == DOWN && snakeDirectionprev1 == UP))
 {
     head1.r -= 1;
@@ -431,26 +428,20 @@ return head1;}
 location2 getnexthead2()
 {
 location2 head2=snakebody2.back();
-if (snakeDirection2 == W && snakeDirectionprev2 != S ||(snakeDirection2 == S && snakeDirectionprev2 == W))
+switch( snakeDirection2)
 {
-    head2.r -= 1;
-    snakeDirectionprev2 = W;
-}
-else if (snakeDirection2 == S && snakeDirectionprev2 != W||(snakeDirection2 == W && snakeDirectionprev2 == S))
-{
-    head2.r += 1;
-    snakeDirectionprev2 = S;
-}
-else if (snakeDirection2 == A && snakeDirectionprev2 != D||(snakeDirection2 == D && snakeDirectionprev2 == A))
-{
-    head2.c -= 1;
-    snakeDirectionprev2 = A;
-}
-else if (snakeDirection2 == D && snakeDirectionprev2 != A||(snakeDirection2 == A && snakeDirectionprev2 == D))
-{
-    head2.c += 1;
-    snakeDirectionprev2 = D;
-}
+case W:
+head2.r -=1;
+break;
+case S:
+head2.r +=1;
+break;
+case A:
+head2.c -=1;
+break;
+case D:
+head2.c +=1;
+break;}
 return head2;}
 
    void moveandgrowsnake1(location1 nexthead1)
@@ -560,7 +551,6 @@ void movesnake1()
         break;
     case WALL:
     case BODY1:
-    case BODY2:
     case BOMB:
     {color = RED;
     snakelife--;
@@ -587,7 +577,7 @@ break;
 case APPLE:
 moveandgrowsnake2(nexthead2);
 generatenextapple();
-speed2=400000;
+speed2=4000000;
 color2=LIGHTMAGENTA;
 eatAppleScore2++;
 movescore2++;
@@ -598,7 +588,6 @@ else if (movescore2%6==0)
 generatebomb();
 break;
 case WALL:
- case BODY1:
 case BODY2:
 case BOMB:
 color2=RED;
@@ -641,67 +630,42 @@ board[1][1]=EMPTY;
 gameover();
 break;
 }}
-void checkkeyinput()
-{
-    char ch;
-    if(kbhit()){
-        ch=getch();
-        if(ch==32){
-         startFire();
-        }}
-}
+
  //----The Fire Functions----//
 
-void startFire()
-{
+/*avoid startFire()
+
+isFireStarted
+
+true:
 
 
-isFireStarted =true;
 
-
-
-fireLocation = getnexthead1 ();
+fireLocation = getnexthead1 ():
 
 fireDirection = snakeDirection1;
 
-drawFire(fireLocation.r,fireLocation.c);
-}
+drawFire(firelocation.r,fireLocation.c);
+
 void stopFire()
-{
 
-
-isFireStarted=false;
+isFireStarted=false:
 
 eraseFire(fireLocation.r,fireLocation.c);
 
-board[fireLocation.r][fireLocation.c]=EMPTY;
-}
-  void moveFire(){
+boardI[fireLocation.r][fireLocation.c]-EMPTY:
+    ------------------------------------------------------
+  void moveFireO)
 
-if(isFireStarted)
-{
+if(1sFireStarted)
 
+location| nextFireLoc = getnextFireLocation();
 
-location1 nextFireLoc = getnextFireLocation();
-if(nextFireLoc.r>35 || nextFireLoc.r<0 || nextFireLoc.c>45 || nextFireLoc.c<0)
-{
-    stopFire();
-    return;
-}
-if(board[fireLocation.r][fireLocation.c]==APPLE || board[fireLocation.r][fireLocation.c]==BODY1 || board[fireLocation.r][fireLocation.c]==BODY2)
-    return ;
 drawFire(nextFireLoc.r,nextFireLoc.c);
 
 eraseFire(fireLocation.r,fireLocation.c);
-fireLocation=nextFireLoc;
-if(board[fireLocation.r][fireLocation.c]==WALL ||(board[fireLocation.r][fireLocation.c]==BOMB)||
-   (board[fireLocation.r][fireLocation.c]==SNOWFLAKE))
-board[fireLocation.r][fireLocation.c]=EMPTY;
-}
-  }
-/*switch(board[fireLocation.r][fireLocation.c])
-{
 
+switch(boardi[fireLocation.r][fireLocation.c])
 
 case SNOWFLAKE:
 
@@ -709,13 +673,13 @@ case BOMB:
 
 eraseFire(fireLocation.r,fireLocation.c);
 
-board1[fireLocation.r][fireLocation.c]=EMPTY;
+boardi[fireLocation.r][fireLocation.c]=EMPTY:
 
-break;
-}
-//fireLocation = nextFireLoc;
-  }*/
-///-=-Game control functions----.*/
+break:
+
+fireLocation = nextFireLoc;
+
+-=-Game control functions----.*/
 
   void changesnakedirection1 (char ch)
 {
@@ -759,38 +723,30 @@ if (kbhit())
    {ch=getch();
  changesnakedirection1(ch);
 }else if( (key==97)|| (key==100)|| (key==115)|| (key==119))
-{changesnakedirection2(key);}else if (key==32)//SpaceBar
+{changesnakedirection2(key);}/*else if (key==32)//SpaceBar
 
-if(!isFireStarted)
-startFire();
+if(tisFireStarted)
 
-}}
+)
+
+startFire():
+
+)*/}}
 
 //---Enter&Retry BUTTON----//
 void checkEnterButton()
 {int button;
 button=getch();
 while(button!=13) //ASCII code for ENTER key is 13
-{button=getch();}
-}
+{button=getch();}}
 //--------EXIT BUTTON -----------//
-void checkEntersButton()
-{int button;
-button=getch();
-if(button==13) //ASCII code for ENTER key is 13
-{button=getch();
-     Game();}
-}
+
 void checkExitButton()
 {int Exit;
 Exit=getch();
-if(Exit==27)//ASCII code for EXIT key is 27
-{
+while(Exit!=27)//ASCII code for EXIT key is 27
+{Exit=getch();}
 closegraph(ALL_WINDOWS);}
-else{
-    checkEntersButton();
-}
-}
 
 void Game()
 {
@@ -821,8 +777,8 @@ switch(levelnum)
   while(!isgameover)
   {if (gametimer==INT_MAX)
     gametimer=0;
-if (gametimer % 1000000==0){
-moveFire();}
+//if (gametimer % 500000==0){
+//moveFire();}
 if(gametimer%speed1==0)
    movesnake1();
    gametimer++;
@@ -847,8 +803,6 @@ if(eatAppleScore1==10)
 while(!isgameover)
 {if (gametimer==INT_MAX)
 gametimer=0;
-if(gametimer%1000000==0)
-    moveFire();
 if (gametimer%speed1==0 && gametimer%speed2==0)
 {movesnake2();
 movescore2++;
@@ -860,34 +814,18 @@ break;}
  setcolor(WHITE);
 setbkcolor(BLACK);
 settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-outtextxy(400, 370, "EXIT: 'ESC' ");
-outtextxy(400, 450, "again: 'ENTER' ");
-outtextxy(400, 450, "again: 'ENTER' ");
-checkExitButton();
+//outtextxy(400, 350, "Retry: 'Enter' ");
+outtextxy(400, 370, "EXIT: 'ALT+ESC' ");
+checkEnterButton();
 return;
+checkExitButton();
 while(!kbhit());
 closegraph();
 }
 int main()
 {
-    auto start = chrono::steady_clock::now();
+
+while(1)
 Game();
-    auto end = chrono::steady_clock::now();
-
-    cout << "Elapsed time in nanoseconds: "
-        << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
-        << " ns" << endl;
-
-    cout << "Elapsed time in microseconds: "
-        << chrono::duration_cast<chrono::microseconds>(end - start).count()
-        << " µs" << endl;
-
-    cout << "Elapsed time in milliseconds: "
-        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-        << " ms" << endl;
-
-    cout << "Elapsed time in seconds: "
-        << chrono::duration_cast<chrono::seconds>(end - start).count()
-        << " sec";
 return 0;
 }
