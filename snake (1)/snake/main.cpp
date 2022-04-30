@@ -4,6 +4,10 @@
 #include<iostream>
 #include<stdio.h>
 #include<windows.h>
+#include<chrono>
+#include<time.h>
+#include <unistd.h>
+using namespace std :: chrono;
 using namespace std;
 bool again=FALSE;
 const int CELL_SIZE = 18;
@@ -241,8 +245,8 @@ settextjustify(CENTER_TEXT, CENTER_TEXT);
 settextstyle(BOLD_FONT,HORIZ_DIR,2);
 outtextxy(getmaxx()/2, getmaxy()/6, "Press Enter");}}}
 void drawMenuBoard()
-{for (int row=0; row<35; row++)
-   for(int col=0; col<45; col++)
+{for (int row=0; row<40; row++) //number of row and number of coloumns :: time complexity
+   for(int col=0; col<50; col++)
     drawWall(row,col);}
 
 void drawBoard1(){
@@ -290,10 +294,10 @@ drawMenuBoard();
 setcolor(WHITE);
 setbkcolor(LIGHTRED);
 settextstyle(BOLD_FONT, HORIZ_DIR, 5);
-outtextxy(180, 50,"The Snake Game");
+outtextxy(300, 50,"The Snake Game");
 settextstyle(BOLD_FONT, HORIZ_DIR, 5);
-outtextxy(100, 220," single player Press 1");
-outtextxy(100, 320," Multiplayer Press 2");}
+outtextxy(300, 220," single player Press 1");
+outtextxy(300, 320," Multiplayer Press 2");}
 
  void choosesnakecolor()
 {
@@ -302,7 +306,7 @@ drawMenuBoard();
 setcolor(WHITE);
 setbkcolor(LIGHTRED);
 settextstyle(BOLD_FONT, HORIZ_DIR, 5);
-outtextxy(300,50, "Choose Snake color");
+outtextxy(350,50, "Choose Snake color");
 setcolor(YELLOW);
 outtextxy(350,220, "Yellow Press 3");
 setcolor(BLUE);
@@ -349,8 +353,8 @@ drawSnow(r,c);}
 {
   int r,c;
   do
-{r=rand()%35;
-c=rand()%45;}
+{r=rand()%33;
+c=rand()%43;}
 while(board [r][c] != EMPTY);
 board[r][c]= APPLE;
 drawApple(r,c);}
@@ -670,7 +674,7 @@ isFireStarted=false;
 
 eraseFire(fireLocation.r,fireLocation.c);
 
-//board[fireLocation.r][fireLocation.c]=EMPTY;
+board[fireLocation.r][fireLocation.c]=EMPTY;
 }
   void moveFire(){
 
@@ -684,10 +688,15 @@ if(nextFireLoc.r>35 || nextFireLoc.r<0 || nextFireLoc.c>45 || nextFireLoc.c<0)
     stopFire();
     return;
 }
+if(board[fireLocation.r][fireLocation.c]==APPLE || board[fireLocation.r][fireLocation.c]==BODY1 || board[fireLocation.r][fireLocation.c]==BODY2)
+    return ;
 drawFire(nextFireLoc.r,nextFireLoc.c);
 
 eraseFire(fireLocation.r,fireLocation.c);
 fireLocation=nextFireLoc;
+if(board[fireLocation.r][fireLocation.c]==WALL ||(board[fireLocation.r][fireLocation.c]==BOMB)||
+   (board[fireLocation.r][fireLocation.c]==SNOWFLAKE))
+board[fireLocation.r][fireLocation.c]=EMPTY;
 }
   }
 /*switch(board[fireLocation.r][fireLocation.c])
@@ -765,13 +774,23 @@ while(button!=13) //ASCII code for ENTER key is 13
 {button=getch();}
 }
 //--------EXIT BUTTON -----------//
-
+void checkEntersButton()
+{int button;
+button=getch();
+if(button==13) //ASCII code for ENTER key is 13
+{button=getch();
+     Game();}
+}
 void checkExitButton()
 {int Exit;
 Exit=getch();
-while(Exit!=27)//ASCII code for EXIT key is 27
-{Exit=getch();}
+if(Exit==27)//ASCII code for EXIT key is 27
+{
 closegraph(ALL_WINDOWS);}
+else{
+    checkEntersButton();
+}
+}
 
 void Game()
 {
@@ -828,6 +847,8 @@ if(eatAppleScore1==10)
 while(!isgameover)
 {if (gametimer==INT_MAX)
 gametimer=0;
+if(gametimer%1000000==0)
+    moveFire();
 if (gametimer%speed1==0 && gametimer%speed2==0)
 {movesnake2();
 movescore2++;
@@ -839,17 +860,34 @@ break;}
  setcolor(WHITE);
 setbkcolor(BLACK);
 settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-outtextxy(400, 370, "EXIT: 'ALT+ESC' ");
+outtextxy(400, 370, "EXIT: 'ESC' ");
+outtextxy(400, 450, "again: 'ENTER' ");
+outtextxy(400, 450, "again: 'ENTER' ");
 checkExitButton();
-
+return;
 while(!kbhit());
 closegraph();
-
 }
 int main()
 {
-
-while(1)
+    auto start = chrono::steady_clock::now();
 Game();
+    auto end = chrono::steady_clock::now();
+
+    cout << "Elapsed time in nanoseconds: "
+        << chrono::duration_cast<chrono::nanoseconds>(end - start).count()
+        << " ns" << endl;
+
+    cout << "Elapsed time in microseconds: "
+        << chrono::duration_cast<chrono::microseconds>(end - start).count()
+        << " µs" << endl;
+
+    cout << "Elapsed time in milliseconds: "
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << " ms" << endl;
+
+    cout << "Elapsed time in seconds: "
+        << chrono::duration_cast<chrono::seconds>(end - start).count()
+        << " sec";
 return 0;
 }
