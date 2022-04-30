@@ -5,6 +5,7 @@
 #include<stdio.h>
 #include<windows.h>
 using namespace std;
+bool again=FALSE;
 const int CELL_SIZE = 18;
 const int EMPTY = 0;
 const int BODY1 = 1;
@@ -23,7 +24,8 @@ int mcolor, color=YELLOW, freezecolor, color2=LIGHTMAGENTA;
 enum Directions1 {UP,DOWN,LEFT,RIGHT};
 enum Directions2 {W,S,A,D};
 Directions1 snakeDirection1=DOWN, snakeDirectionprev1=  DOWN;
-Directions2 snakeDirection2= S;
+Directions2 snakeDirection2= S, snakeDirectionprev2=  S;
+void Game();////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct location1
 {int r;
 int c;};
@@ -428,20 +430,26 @@ return head1;}
 location2 getnexthead2()
 {
 location2 head2=snakebody2.back();
-switch( snakeDirection2)
+if (snakeDirection2 == W && snakeDirectionprev2 != S ||(snakeDirection2 == S && snakeDirectionprev2 == W))
 {
-case W:
-head2.r -=1;
-break;
-case S:
-head2.r +=1;
-break;
-case A:
-head2.c -=1;
-break;
-case D:
-head2.c +=1;
-break;}
+    head2.r -= 1;
+    snakeDirectionprev2 = W;
+}
+else if (snakeDirection2 == S && snakeDirectionprev2 != W||(snakeDirection2 == W && snakeDirectionprev2 == S))
+{
+    head2.r += 1;
+    snakeDirectionprev2 = S;
+}
+else if (snakeDirection2 == A && snakeDirectionprev2 != D||(snakeDirection2 == D && snakeDirectionprev2 == A))
+{
+    head2.c -= 1;
+    snakeDirectionprev2 = A;
+}
+else if (snakeDirection2 == D && snakeDirectionprev2 != A||(snakeDirection2 == A && snakeDirectionprev2 == D))
+{
+    head2.c += 1;
+    snakeDirectionprev2 = D;
+}
 return head2;}
 
    void moveandgrowsnake1(location1 nexthead1)
@@ -551,6 +559,7 @@ void movesnake1()
         break;
     case WALL:
     case BODY1:
+    case BODY2:
     case BOMB:
     {color = RED;
     snakelife--;
@@ -577,7 +586,7 @@ break;
 case APPLE:
 moveandgrowsnake2(nexthead2);
 generatenextapple();
-speed2=4000000;
+speed2=400000;
 color2=LIGHTMAGENTA;
 eatAppleScore2++;
 movescore2++;
@@ -588,6 +597,7 @@ else if (movescore2%6==0)
 generatebomb();
 break;
 case WALL:
+ case BODY1:
 case BODY2:
 case BOMB:
 color2=RED;
@@ -738,7 +748,8 @@ void checkEnterButton()
 {int button;
 button=getch();
 while(button!=13) //ASCII code for ENTER key is 13
-{button=getch();}}
+{button=getch();}
+}
 //--------EXIT BUTTON -----------//
 
 void checkExitButton()
@@ -814,13 +825,12 @@ break;}
  setcolor(WHITE);
 setbkcolor(BLACK);
 settextstyle(BOLD_FONT, HORIZ_DIR, 3);
-//outtextxy(400, 350, "Retry: 'Enter' ");
 outtextxy(400, 370, "EXIT: 'ALT+ESC' ");
-checkEnterButton();
-return;
 checkExitButton();
+
 while(!kbhit());
 closegraph();
+
 }
 int main()
 {
