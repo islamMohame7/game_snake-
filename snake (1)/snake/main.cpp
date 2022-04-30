@@ -25,7 +25,9 @@ enum Directions1 {UP,DOWN,LEFT,RIGHT};
 enum Directions2 {W,S,A,D};
 Directions1 snakeDirection1=DOWN, snakeDirectionprev1=  DOWN;
 Directions2 snakeDirection2= S, snakeDirectionprev2=  S;
-void Game();////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Game();
+void checkkeyinput();
+void startFire();
 struct location1
 {int r;
 int c;};
@@ -115,7 +117,9 @@ int board[35][45]=
 
 
  //   ----The Functios Of Draw&Erase Every Element----//
+
 void drawWall(int row, int col){
+
 int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
 int right = left + CELL_SIZE;
@@ -129,16 +133,22 @@ line(left+12, top+0, left+12, top+9);
 line(left+4, top+9, left+4 , bottom);
 line(left, bottom, right , bottom);
 line(left, top , right , top);}
-/*void drawFire(int row, int col)
-int left = col*CELL_SIZE:
+
+
+void drawFire(int row, int col){
+int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
-readimagefile( "yg. ico", left, top, left +16, top +16 ):
-void eraseFire (int row, int col)
-= int left = col*CELL_SIZE;
+setfillstyle(SOLID_FILL, LIGHTCYAN);
+bar (left+2, top+2, left+15, top+15);
+}
+void eraseFire (int row, int col){
+ int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
 setfillstyle(SOLID_FILL, BLACK);
 bar (left, top, left+18, top+18);
-}*/
+}
+
+
 
 void drawheart (int row, int col)
 {int left = col*CELL_SIZE;
@@ -391,20 +401,7 @@ return nextFireLoc;}
 location1 getnexthead1()
 {
 location1 head1=snakebodyl.back();
-/*switch(snakeDirection1)
-{
-case UP:
-head1.r -=1;
-break;
-case DOWN:
-head1.r +=1;
-break;
-case LEFT:
-head1.c -=1;
-break;
-case RIGHT:
-head1.c +=1;
-break;}*/
+
 if (snakeDirection1 == UP && snakeDirectionprev1 != DOWN ||(snakeDirection1 == DOWN && snakeDirectionprev1 == UP))
 {
     head1.r -= 1;
@@ -640,42 +637,62 @@ board[1][1]=EMPTY;
 gameover();
 break;
 }}
-
+void checkkeyinput()
+{
+    char ch;
+    if(kbhit()){
+        ch=getch();
+        if(ch==32){
+         startFire();
+        }}
+}
  //----The Fire Functions----//
 
-/*avoid startFire()
-
-isFireStarted
-
-true:
+void startFire()
+{
 
 
+isFireStarted =true;
 
-fireLocation = getnexthead1 ():
+
+
+fireLocation = getnexthead1 ();
 
 fireDirection = snakeDirection1;
 
-drawFire(firelocation.r,fireLocation.c);
-
+drawFire(fireLocation.r,fireLocation.c);
+}
 void stopFire()
+{
 
-isFireStarted=false:
+
+isFireStarted=false;
 
 eraseFire(fireLocation.r,fireLocation.c);
 
-boardI[fireLocation.r][fireLocation.c]-EMPTY:
-    ------------------------------------------------------
-  void moveFireO)
+//board[fireLocation.r][fireLocation.c]=EMPTY;
+}
+  void moveFire(){
 
-if(1sFireStarted)
+if(isFireStarted)
+{
 
-location| nextFireLoc = getnextFireLocation();
 
+location1 nextFireLoc = getnextFireLocation();
+if(nextFireLoc.r>35 || nextFireLoc.r<0 || nextFireLoc.c>45 || nextFireLoc.c<0)
+{
+    stopFire();
+    return;
+}
 drawFire(nextFireLoc.r,nextFireLoc.c);
 
 eraseFire(fireLocation.r,fireLocation.c);
+fireLocation=nextFireLoc;
+}
+  }
+/*switch(board[fireLocation.r][fireLocation.c])
+{
 
-switch(boardi[fireLocation.r][fireLocation.c])
 
 case SNOWFLAKE:
 
@@ -683,13 +700,13 @@ case BOMB:
 
 eraseFire(fireLocation.r,fireLocation.c);
 
-boardi[fireLocation.r][fireLocation.c]=EMPTY:
+board1[fireLocation.r][fireLocation.c]=EMPTY;
 
-break:
-
-fireLocation = nextFireLoc;
-
--=-Game control functions----.*/
+break;
+}
+//fireLocation = nextFireLoc;
+  }*/
+///-=-Game control functions----.*/
 
   void changesnakedirection1 (char ch)
 {
@@ -733,15 +750,12 @@ if (kbhit())
    {ch=getch();
  changesnakedirection1(ch);
 }else if( (key==97)|| (key==100)|| (key==115)|| (key==119))
-{changesnakedirection2(key);}/*else if (key==32)//SpaceBar
+{changesnakedirection2(key);}else if (key==32)//SpaceBar
 
-if(tisFireStarted)
+if(!isFireStarted)
+startFire();
 
-)
-
-startFire():
-
-)*/}}
+}}
 
 //---Enter&Retry BUTTON----//
 void checkEnterButton()
@@ -788,8 +802,8 @@ switch(levelnum)
   while(!isgameover)
   {if (gametimer==INT_MAX)
     gametimer=0;
-//if (gametimer % 500000==0){
-//moveFire();}
+if (gametimer % 1000000==0){
+moveFire();}
 if(gametimer%speed1==0)
    movesnake1();
    gametimer++;
