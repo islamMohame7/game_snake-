@@ -1,0 +1,25 @@
+# depslib dependency file v1.0
+1651311433 source:c:\users\book\desktop\snake\main.cpp
+	<graphics.h>
+	<climits>
+	<queue>
+	<iostream>
+	<stdio.h>
+	<windows.h>
+
+1651199904 c:\users\book\desktop\snake\graphics.h
+	<windows.h>
+	<limits.h>
+	<sstream>
+
+1651332450 source:c:\users\islam mohamed\onedrive\desktop\snake (1)\snake\main.cpp
+	<graphics.h>
+	<climits>
+	<queue>
+	<iostream>
+	<stdio.h>
+	<windows.h>
+	<chrono>
+	<time.h>
+	<unistd.h>
+

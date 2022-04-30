@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1651246746 source:c:\users\book\desktop\mofak.cpp
+	"graphics.h"
+	<climits>
+	<queue>
+	<iostream>
+	<stdio.h>
+	<windows.h>
+
+1266090614 c:\program files (x86)\codeblocks-ep\sdk\winbgim\include\graphics.h
+	<windows.h>
+	<limits.h>
+	<sstream>
+
