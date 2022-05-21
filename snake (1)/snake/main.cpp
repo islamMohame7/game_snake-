@@ -19,19 +19,23 @@ const int WALL = 3;
 const int SNOWFLAKE = 4;
 const int BOMB=5;
 const int HEART=7;
+int difficulty;
+
 int snakelife=5;
+int firecounter =5;//to use only 5 fire balls
 bool isgameover=false;
-bool isFireStarted; int movescore1=0, movescore2=0,eatAppleScore1=0, eatAppleScore2=0;
-long long speed1=4000000, speed2=4000000;
+bool isFireStarted;//to see if the file started
+int movescore1=0, movescore2=0, eatAppleScore1=0, eatAppleScore2=0;
+long long speed1=4000000, speed2=4000000;//snakes initial speeds
 int mcolor, color=YELLOW, freezecolor, color2=LIGHTMAGENTA;
 enum Directions1 {UP,DOWN,LEFT,RIGHT};
 enum Directions2 {W,S,A,D};
 Directions1 snakeDirection1=DOWN, snakeDirectionprev1=  DOWN;
-Directions2 snakeDirection2= S, snakeDirectionprev2=  S;
+Directions2 snakeDirection2= S, snakeDirectionprev2=  S;//to not make the snakes change direction 180 degrees
 void Game();
 void checkkeyinput();
-void startFire();
-struct location1
+void startFire();//to use fire
+struct location1//location in array
 {int r;
 int c;};
 struct location2
@@ -117,12 +121,8 @@ int board[35][45]=
     {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3},
     {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3},
     {3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3}};
-
-
  //   ----The Functios Of Draw&Erase Every Element----//
-
 void drawWall(int row, int col){
-
 int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
 int right = left + CELL_SIZE;
@@ -136,8 +136,6 @@ line(left+12, top+0, left+12, top+9);
 line(left+4, top+9, left+4 , bottom);
 line(left, bottom, right , bottom);
 line(left, top , right , top);}
-
-
 void drawFire(int row, int col){
 int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
@@ -152,12 +150,10 @@ bar (left, top, left+18, top+18);
 }
 
 
-
 void drawheart (int row, int col)
 {int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
 readimagefile("heart.ico", left, top, left+16, top + 16);}
-
 void eraseheart (int row, int col)
 {int left = col*CELL_SIZE;
  int top = row*CELL_SIZE;
@@ -170,7 +166,6 @@ void drawbomb(int row, int col)
     int top = row*CELL_SIZE;
     readimagefile("bomb.ico", left, top, left + 16, top + 16);
 }
-
 void drawSnow(int row, int col)
 {int left = col*CELL_SIZE;
 int top = row*CELL_SIZE;
@@ -189,11 +184,10 @@ void drawempty(int row, int col)
     int bottom = top+CELL_SIZE;
 setfillstyle(SOLID_FILL, BLACK);
 bar (left, top, right, bottom);}
-
 void drawSnakeBody1 (int row, int col)
 {int left = col*CELL_SIZE;
  int top =row*CELL_SIZE;
- setfillstyle(SOLID_FILL,color);  //   ***************   //
+ setfillstyle(SOLID_FILL,color);  //   *   //
  bar(left+1, top+1, left+17, top+17);
 }
 void eraseSnakeBody1 (int row, int col)
@@ -201,7 +195,6 @@ void eraseSnakeBody1 (int row, int col)
 int top = row*CELL_SIZE;
 setfillstyle(SOLID_FILL, BLACK);
 bar(left, top, left+18, top+18);}
-
 void drawSnakeBody2(int row, int col)
 {int left = col*CELL_SIZE;
 int top =row*CELL_SIZE;
@@ -213,7 +206,6 @@ void eraseSnakeBody2(int row, int col)
 int top = row*CELL_SIZE;
 setfillstyle(SOLID_FILL, BLACK);
 bar (left,top, left+18, top+18);}
-
 void generatewall()
 {for (int i=0;i<=4;i++) {
 int r,c;
@@ -222,10 +214,9 @@ do
     r=rand()%35;
     c=rand()%45;
 }
-while(board[r][c]!=EMPTY);              //*****************//
-board[r][c]= WALL;                 //*******************//
+while(board[r][c]!=EMPTY);              //*//
+board[r][c]= WALL;                 //*//
 drawWall(r,c);}}
-
 //---Functions Of Drawing Screens----//
 void drawBoard()
 {
@@ -251,7 +242,6 @@ void drawMenuBoard()
 void drawBoard1(){
   for(int row=0; row<35; row++)
   {for (int col=0; col<45; col++)
-
    {switch(board[row][col])
 {
 case EMPTY:
@@ -281,11 +271,11 @@ case BOMB:
      drawempty(row, col);
      drawbomb(row, col);
      break;
+
 case HEART:
      drawempty(row, col);
      drawheart(row, col);
      break;}}}}
-
 void MenuBoardSingleorMulti()
 {
 system("cls");
@@ -298,7 +288,25 @@ settextstyle(BOLD_FONT, HORIZ_DIR, 5);
 outtextxy(300, 220," single player Press 1");
 outtextxy(300, 320," Multiplayer Press 2");}
 
- void choosesnakecolor()
+ void choosedifficulty() // difficulty function
+{
+system("cls");
+drawMenuBoard();
+setcolor(WHITE);
+setbkcolor(LIGHTRED);
+settextstyle(BOLD_FONT, HORIZ_DIR, 5);
+outtextxy(350,50, "Choose Snake color");
+setcolor(YELLOW);
+outtextxy(350,220, "EASY Press 3");
+setcolor(BLUE);
+outtextxy(350,320,"MEDIUM Press 4");
+setcolor(GREEN);
+outtextxy(350,420, "HARD Press 5");
+difficulty=getch();
+while( (difficulty!=51)&&(difficulty !=52)&&(difficulty !=53))
+difficulty=getch();}
+
+ void choosesnakecolor()//to choose snake color
 {
 system("cls");
 drawMenuBoard();
@@ -323,14 +331,14 @@ case 52:
      mcolor=BLUE;color=mcolor;   break;
 case 53:
      mcolor=GREEN;color=mcolor;  break;}}
- //--the Functions Of Generating The Things That The Snake--//
+ //--the Functions Of Generating The Things That The Snake hates--//
 void generatebomb()
 {
 int r,c;
 do
 {
-r=rand()%35;
-c=rand()%45;}
+r=rand()%35;//35 is the row size
+c=rand()%45;}//45 is the column size
 while(board [r][c] != EMPTY);
 board[r][c]= BOMB;
 drawbomb(r,c);
@@ -340,14 +348,12 @@ void generatesnow()
   int r,c;
     do
 {
-
 r=rand()%35;
 c=rand()%45;
 }
 while(board[r][c]!=EMPTY);
 board[r][c]= SNOWFLAKE;
 drawSnow(r,c);}
-
  void generatenextapple()
 {
   int r,c;
@@ -357,12 +363,11 @@ c=rand()%43;}
 while(board [r][c] != EMPTY);
 board[r][c]= APPLE;
 drawApple(r,c);}
-
 //----Function Of Respawn Snake----//
-
 void initsnake1()
 {
-                                 // queue//
+//queue
+delay(600);    //delay
 location1 loc;
 loc.r=15;
 loc.c=15;
@@ -370,7 +375,6 @@ for(int i=0 ; i<=1;i++){
 snakebodyl.push(loc);
 board[loc.r][loc.c] =1;
 loc.r+=1;}}
-
  void initsnake2()
 {
 location2 loc;
@@ -400,12 +404,11 @@ case RIGHT:
 nextFireLoc.c +=1;
 break;}
 return nextFireLoc;}
-
 location1 getnexthead1()
 {
 location1 head1=snakebodyl.back();
-
-if (snakeDirection1 == UP && snakeDirectionprev1 != DOWN ||(snakeDirection1 == DOWN && snakeDirectionprev1 == UP))
+if (snakeDirection1 == UP && snakeDirectionprev1 != DOWN ||(snakeDirection1 == DOWN && snakeDirectionprev1 == UP))//snakeDirectionprev is to save the previous
+    //state to prevent 180 degree rotation
 {
     head1.r -= 1;
     snakeDirectionprev1 = UP;
@@ -426,7 +429,6 @@ else if (snakeDirection1 == RIGHT && snakeDirectionprev1 != LEFT||(snakeDirectio
     snakeDirectionprev1 = RIGHT;
 }
 return head1;}
-
 location2 getnexthead2()
 {
 location2 head2=snakebody2.back();
@@ -451,7 +453,6 @@ else if (snakeDirection2 == D && snakeDirectionprev2 != A||(snakeDirection2 == A
     snakeDirectionprev2 = D;
 }
 return head2;}
-
    void moveandgrowsnake1(location1 nexthead1)
 {
     snakebodyl.push(nexthead1);
@@ -473,7 +474,6 @@ void moveandgrowsnake2(location2 nexthead2)
 snakebody2.push(nexthead2);
 drawSnakeBody2(nexthead2.r,nexthead2.c);
 board[nexthead2.r][nexthead2.c] =1;}
-
  void movesnake2tonextlocation(location2 nexthead2)
 {snakebody2.push(nexthead2);
 drawSnakeBody2(nexthead2.r, nexthead2.c);
@@ -482,19 +482,15 @@ location2 tai12=snakebody2.front();
 snakebody2.pop();
 eraseSnakeBody2(tai12.r,tai12.c);
 board[tai12.r][tai12.c] =0; }
-
   //----The Function of Freezing The Snake----//
-
 void freezesnake1()
-{speed1=1000000;
+{speed1=2500000;
 freezecolor=LIGHTCYAN;
 color=freezecolor;}
-
 void freezesnake2()
 {
-speed2=1000000;
+speed2=2500000;
 color2=LIGHTCYAN;}
-
 void gameover()
 {
  isgameover=true;
@@ -505,9 +501,8 @@ void gameover()
  outtextxy(getmaxx()/2, getmaxy()/2, "Game Over");
  char arr [50];
  settextstyle(BOLD_FONT,HORIZ_DIR,5);
- printf(arr, "Scorel: %d", eatAppleScore1);
+ sprintf(arr, "Scorel: %d", eatAppleScore1);
  outtextxy(130,50,arr);}
-
 void gameover1()
 {
     isgameover=true;
@@ -520,7 +515,6 @@ void gameover1()
     settextstyle(BOLD_FONT, HORIZ_DIR,5);
     sprintf(as, "Score2: %d",eatAppleScore2);
     outtextxy(130,100,as);}
-
 void gameover2()
 {
    isgameover=true;
@@ -533,7 +527,6 @@ void gameover2()
    settextstyle(BOLD_FONT, HORIZ_DIR,5);
    sprintf(as, "Score2: %d",eatAppleScore2);
    outtextxy(130,100,as);}
-
 //----More Move Snake Functions----//
 void movesnake1()
 {location1 nexthead1 = getnexthead1();
@@ -549,13 +542,30 @@ void movesnake1()
         color = mcolor;
         movescore1++;
         eatAppleScore1++;
-        if (movescore1 % 4 == 0)
+        if (difficulty==53)
+        {if (movescore1%2 == 0)
         {
             generatesnow();
             movescore1++;
-        }
-        else if (movescore1 % 5 == 0)
+            generatebomb();}
+            if (movescore1%3 == 0)
+                {
+                    generatewall();
+                }}
+        else if (difficulty==52)
+        {if (movescore1%3 == 0)
+        {
+            generatesnow();
             generatebomb();
+            movescore1++;
+        }
+        }
+        else if (difficulty==51)
+        {if (movescore1%5 == 0)
+        {
+            generatesnow();
+            movescore1++;
+            generatebomb();}}
         break;
     case WALL:
     case BODY1:
@@ -569,12 +579,12 @@ void movesnake1()
         gameover1();
     }
     break; }
-
     case SNOWFLAKE:
         movesnake1tonextlocation(nexthead1);
         freezesnake1();
         break;
-    }}
+    }
+    }
 
 void movesnake2()
 {
@@ -586,7 +596,7 @@ break;
 case APPLE:
 moveandgrowsnake2(nexthead2);
 generatenextapple();
-speed2=400000;
+speed2=4000000;
 color2=LIGHTMAGENTA;
 eatAppleScore2++;
 movescore2++;
@@ -597,18 +607,14 @@ else if (movescore2%6==0)
 generatebomb();
 break;
 case WALL:
- case BODY1:
+case BODY1:
 case BODY2:
 case BOMB:
 color2=RED;
 gameover();
 gameover2();
 break;
-case SNOWFLAKE:
-movesnake2tonextlocation(nexthead2);
-freezesnake2();
 break;}}
-
  void snakehearts()
 {
 switch (snakelife)
@@ -628,7 +634,6 @@ case 2:
 isgameover=false;
 drawMenuBoard();
 drawBoard1();
-
 initsnake1();
 eraseheart(1,2);
 board[1][2]=EMPTY;
@@ -640,6 +645,7 @@ board[1][1]=EMPTY;
 gameover();
 break;
 }}
+
 void checkkeyinput()
 {
     char ch;
@@ -650,76 +656,58 @@ void checkkeyinput()
         }}
 }
  //----The Fire Functions----//
-
 void startFire()
 {
-
-
 isFireStarted =true;
+fireLocation = getnexthead1 ();//to get next fire location
+drawFire(fireLocation.r,fireLocation.c);//to draw fire
+fireDirection = snakeDirection1;//to make the fire direction in the same direction of the snake
 
-
-
-fireLocation = getnexthead1 ();
-
-fireDirection = snakeDirection1;
-
-drawFire(fireLocation.r,fireLocation.c);
+firecounter--;
 }
 void stopFire()
 {
+isFireStarted=false;//to stop fire
 
+eraseFire(fireLocation.r,fireLocation.c);//to make the clour black
 
-isFireStarted=false;
-
-eraseFire(fireLocation.r,fireLocation.c);
-
-board[fireLocation.r][fireLocation.c]=EMPTY;
+board[fireLocation.r][fireLocation.c]=EMPTY;//to make it empty
 }
   void moveFire(){
 
-if(isFireStarted)
+if(isFireStarted && (firecounter!=-1))
 {
 
-
 location1 nextFireLoc = getnextFireLocation();
-if(nextFireLoc.r>35 || nextFireLoc.r<0 || nextFireLoc.c>45 || nextFireLoc.c<0)
+if(nextFireLoc.r>35 || nextFireLoc.r<0 || nextFireLoc.c>45 || nextFireLoc.c<0)//to to make the fire stop when it hits the border of the game
 {
     stopFire();
     return;
 }
 if(board[fireLocation.r][fireLocation.c]==APPLE || board[fireLocation.r][fireLocation.c]==BODY1 || board[fireLocation.r][fireLocation.c]==BODY2)
-    return ;
+    {//to make the fire avoid them
+        fireLocation=nextFireLoc;
+
+        return ;
+
+    }
 drawFire(nextFireLoc.r,nextFireLoc.c);
 
 eraseFire(fireLocation.r,fireLocation.c);
 fireLocation=nextFireLoc;
-if(board[fireLocation.r][fireLocation.c]==WALL ||(board[fireLocation.r][fireLocation.c]==BOMB)||
+if((board[fireLocation.r][fireLocation.c]==BOMB)||//to erase the bomb and snowflakes only
    (board[fireLocation.r][fireLocation.c]==SNOWFLAKE))
 board[fireLocation.r][fireLocation.c]=EMPTY;
 }
+if((board[fireLocation.r][fireLocation.c]==WALL)&& fireLocation.r<34&&fireLocation.c<44&&fireLocation.r>0 &&fireLocation.c>0)
+board[fireLocation.r][fireLocation.c]=EMPTY;//to erase the wall if it is not border
   }
-/*switch(board[fireLocation.r][fireLocation.c])
-{
 
-
-case SNOWFLAKE:
-
-case BOMB:
-
-eraseFire(fireLocation.r,fireLocation.c);
-
-board1[fireLocation.r][fireLocation.c]=EMPTY;
-
-break;
-}
-//fireLocation = nextFireLoc;
-  }*/
-///-=-Game control functions----.*/
-
+//--Game control functions----.*/
   void changesnakedirection1 (char ch)
 {
 switch(ch)
-{
+{//characters for snake 1
 case KEY_UP:
 snakeDirection1=UP;
 break;
@@ -732,7 +720,7 @@ break;
 case KEY_RIGHT:
 snakeDirection1=RIGHT;
 break;}}
-void changesnakedirection2(int con)
+void changesnakedirection2(int con)//character for snake 2
 {
 switch (con)
 {case 119:
@@ -755,16 +743,13 @@ char ch;
 if (kbhit())
 {   ch=key=getch();
     if (ch==0)
-   {ch=getch();
- changesnakedirection1(ch);
+   {key=getch();
+ changesnakedirection1(key);
 }else if( (key==97)|| (key==100)|| (key==115)|| (key==119))
 {changesnakedirection2(key);}else if (key==32)//SpaceBar
-
 if(!isFireStarted)
 startFire();
-
 }}
-
 //---Enter&Retry BUTTON----//
 void checkEnterButton()
 {int button;
@@ -794,7 +779,6 @@ else{
 void Game()
 {
 closegraph(ALL_WINDOWS);
-snakelife=5;
 board[1][3]=HEART;
 board[1][2]=HEART;
 board[1][1]=HEART;
@@ -806,14 +790,13 @@ int gametimer=0;
 isgameover=false;
 drawBoard();
 checkEnterButton();
-//drawahmed();//
-checkEnterButton();
 MenuBoardSingleorMulti();
 levelnum = getch();
 while( (levelnum!=49)&&(levelnum !=50))
 levelnum =getch();
 switch(levelnum)
 {case 49:
+    choosedifficulty();
   choosesnakecolor();
   drawBoard1();
   initsnake1();
@@ -822,7 +805,7 @@ switch(levelnum)
     gametimer=0;
 if (gametimer % 1000000==0){
 moveFire();}
-if(gametimer%speed1==0)
+if(gametimer%speed1==0)//for 1 player
    movesnake1();
    gametimer++;
    KEYINPUTTEST();
@@ -848,28 +831,26 @@ while(!isgameover)
 gametimer=0;
 if(gametimer%1000000==0)
     moveFire();
-if (gametimer%speed1==0 && gametimer%speed2==0)
+if (gametimer%speed1==0 && gametimer%speed2==0)//for multiple players
 {movesnake2();
 movescore2++;
 movesnake1();}
 gametimer++;
-KEYINPUTTEST();
 KEYINPUTTEST();}
 break;}
  setcolor(WHITE);
 setbkcolor(BLACK);
 settextstyle(BOLD_FONT, HORIZ_DIR, 3);
 outtextxy(400, 370, "EXIT: 'ESC' ");
-outtextxy(400, 450, "again: 'ENTER' ");
-outtextxy(400, 450, "again: 'ENTER' ");
+
 checkExitButton();
 return;
 while(!kbhit());
 closegraph();
 }
 int main()
-{
-    auto start = chrono::steady_clock::now();
+{ //calculating the time
+ auto start = chrono::steady_clock::now();
 Game();
     auto end = chrono::steady_clock::now();
 
