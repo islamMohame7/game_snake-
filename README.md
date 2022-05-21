@@ -12,6 +12,8 @@ https://drive.google.com/file/d/18XGmo6ereaJBxcnsrBgV3TFGwd2HCqap/view?usp=shari
 
 download 32-bit compiler:
 https://jmeubank.github.io/tdm-gcc/
+
+
 ![files](https://user-images.githubusercontent.com/84816935/169643812-8e2b665e-a242-4e4d-9ea7-aa32227cc598.PNG)
 
 download graphics.h library files:
